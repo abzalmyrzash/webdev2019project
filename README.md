@@ -11,5 +11,5 @@ JonedIn is a social media. A pretty basic and simple social media, nothing extra
   - Sorting by new will display *the most recent* posts first.
   - Sorting by old, on the other hand, will display *the oldest* posts first.
   - Sorting by top will display the posts *with the biggest scores* first.
-  - Sorting by hot, will display the posts first *depending on the algorithm*. (Generally, *recent* posts *with a big score* will display first. Between two posts that have same score, *the newest* of them will be displayed first)
+  - Sorting by hot will display the posts first *depending on the algorithm*. (Generally, *recent* posts *with a big score* will be displayed first. Between two posts that have same score, *the newest* of them will be chosen to appear first)
   
