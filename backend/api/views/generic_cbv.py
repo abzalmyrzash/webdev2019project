@@ -1,6 +1,7 @@
-from api.models import  Group
-from django.contrib.auth.models import User
-from api.serializers import UserSerializer,  GroupSerializer
+from rest_framework.views import APIView
+
+from api.models import  Group,Comment,Post
+from api.serializers import UserSerializer,  GroupSerializer,CommentSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
@@ -17,4 +18,5 @@ class GroupView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
 

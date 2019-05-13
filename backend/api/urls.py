@@ -5,6 +5,8 @@ urlpatterns = [
 
     path('login', views.login),
     path('logout', views.logout),
+    re_path(r'group/\d/posts/(\d{1,4})/comments/(\d{1,4})', views.comment_detail.as_view()),
+    re_path(r'group/\d/posts/(\d{1,4})/comments', views.post_comments.as_view()),
     re_path(r'group/\d/posts/(\d{1,4})',views.post_detail),
     path('group/<int:pk>/posts', views.GroupPostView.as_view()),
     path('group', views.GroupView.as_view()),
