@@ -27,9 +27,9 @@ class AbstractPost(models.Model):
         abstract = True
 
 class Post(AbstractPost):
+    title=models.CharField(max_length=100)
     group_id = models.IntegerField(default=1)
 
 class Comment(AbstractPost):
-    group_id = models.IntegerField()
     directed_to=models.ForeignKey(Post,on_delete=models.CASCADE,default=1)
 

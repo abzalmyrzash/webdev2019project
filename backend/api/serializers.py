@@ -30,20 +30,20 @@ class PostSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     group_id=serializers.IntegerField(read_only=True)
     id=serializers.IntegerField(read_only=True)
+    title=serializers.CharField(required=True)
     class Meta:
         model = Post
-        fields = ('id', 'body', 'created_by','created_at','group_id','like_count',)
+        fields = ('id','title', 'body', 'created_by','created_at','group_id','like_count',)
 
 class CommentSerializer(serializers.ModelSerializer):
     body = serializers.CharField(max_length=1000)
     like_count = serializers.IntegerField(read_only=True)
     created_by = UserSerializer(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
-    group_id=serializers.IntegerField(required=True)
     directed_to=PostSerializer(read_only=True)
     class Meta:
         model = Post
-        fields = ('id', 'body', 'created_by','created_at','group_id','like_count','directed_to',)
+        fields = ('id', 'body', 'created_by','created_at','like_count','directed_to',)
 
 
 
