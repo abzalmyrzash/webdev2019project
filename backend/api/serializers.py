@@ -5,10 +5,24 @@ from api.models import CustomUser as User, Group, Post, Comment
 class UserSerializer(serializers.ModelSerializer):
     # reputation = serializers.IntegerField(read_only=True)
 
+    def create(self, validated_data):
+        print(validated_data)
+        user = User.objects.create(
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            is_superuser=validated_data['is_superuser'],
+            email=validated_data['email']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
+
     class Meta:
         model = User
-        # fields = ('id', 'username', 'email', 'reputation', )
-        fields = '__all__'
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'email', 'reputation', 'date_joined', 'is_superuser')
+        # fields = '__all__'
 
 
 class GroupSerializer(serializers.ModelSerializer):

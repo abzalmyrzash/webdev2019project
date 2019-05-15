@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.urls import path,include,re_path
 from api import views
+from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
 
     path('login/', views.login),
     path('logout/', views.logout),
+    path('signup/', views.CreateUserView.as_view()),
 
     path('created_groups/', views.CreatedGroups.as_view()),
     path('subscribed_groups/', views.SubscribedGroups.as_view()),

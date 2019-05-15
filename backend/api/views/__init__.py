@@ -1,7 +1,7 @@
 # from .old_w12 import category_list, category_detail, category_product
 # from .fbv import category_list, category_detail
 # from .cbv import CategoryList, CategoryDetail
-from .auth import UserList, login, logout
+from .auth import UserList, login, logout, CreateUserView
 from .generic_cbv import  Groups, GroupDetail, SubscribedGroups, CreatedGroups
 from .cbv import GroupPostView,post_comments,comment_detail
 
