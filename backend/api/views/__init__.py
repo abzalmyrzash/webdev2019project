@@ -2,7 +2,7 @@
 # from .fbv import category_list, category_detail
 # from .cbv import CategoryList, CategoryDetail
 from .auth import UserList, login, logout
-from .generic_cbv import  GroupView
+from .generic_cbv import  Groups, GroupDetail, SubscribedGroups, CreatedGroups
 from .cbv import GroupPostView,post_comments,comment_detail
 
-from .fbv import post_detail
+from .fbv import post_detail, comment_replies, post_like, comment_like, subscribe

@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 
-class GroupView(generics.ListCreateAPIView):
+class Groups(generics.ListCreateAPIView):
     def get_queryset(self):
         return Group.objects.all()
 
@@ -20,3 +20,28 @@ class GroupView(generics.ListCreateAPIView):
         serializer.save(created_by=self.request.user)
 
 
+class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
+    def get_queryset(self):
+        print(self.request)
+        return Group.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    serializer_class = GroupSerializer
+
+
+class SubscribedGroups(generics.ListAPIView):
+    def get_queryset(self):
+        return Group.objects.filter(subscribers__id=self.request.user.id)
+
+    def get_serializer_class(self):
+        return GroupSerializer
+
+
+class CreatedGroups(generics.ListAPIView):
+    def get_queryset(self):
+        return Group.objects.filter(created_by_id=self.request.user.id)
+
+    def get_serializer_class(self):
+        return GroupSerializer
