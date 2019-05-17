@@ -1,4 +1,239 @@
-<div id="header">
-  <span>Groups</span>
-  <span *ng-if="logged"></span>
+<div *ngIf="!isLogged">
+
+  <div *ngIf="location == 'Login'">
+      <div class="login">
+        <h1>Login to JoindedIn</h1>
+            <p><input type="text" placeholder="Username" [(ngModel)]="login"></p>
+            <p><input type="password" placeholder="Password" [(ngModel)]="password"></p>
+            <p class="remember_me">
+            <label>
+              <input type="checkbox" id="remember_me" [(ngModel)]="remember_me">
+              Remember me on this computer
+            </label>
+            </p>
+            <p class="submit"><button (click)="auth();">Login</button></p>
+            <br>
+            <p>Don't have an account?</p>
+            <button (click)="location='Register'">Sign up!</button>
+      </div>
+          
+      <div class="login-help">
+        <p>Forgot your password? <a href="#">Click here to reset it</a>.</p>
+      </div>
+  </div>
+
+
+  <div *ngIf="location == 'Register'">
+    <div class="register">
+      <h1>Register to JoindedIn</h1>
+            <p><input type="text" placeholder="Username" [(ngModel)]="new_username"></p>
+            <p><input type="text" placeholder="Email" [(ngModel)]="new_email"></p>
+            <p><input type="text" placeholder="Name" [(ngModel)]="new_first_name"></p>
+            <p><input type="text" placeholder="Surname" [(ngModel)]="new_last_name"></p>
+            
+        <p><input type="password" placeholder="Password" [(ngModel)]="new_password"></p>
+        <p class="remember_me">
+        <label>
+          <input type="checkbox" id="remember_me" [(ngModel)]="remember_me">
+          Remember me on this computer
+        </label>
+        </p>
+        <p class="submit">
+          <button (click)="signup();">Register</button>
+          <br> 
+          <button (click)="location='Login'">Go back to Login</button>
+        </p>
+    </div>
+      
+    <div class="login-help">
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div *ngIf="isLogged">
+  <input type="text" placeholder="Search for a group"
+   [(ngModel)]='search_parameter' id="search-group">
+
+
+  <button (click)="location='SearchGroup';getGroups()" id="find-button">Find</button>
+
+  <button (click)="location='GroupList';getSubscribedGroups(); getCreatedGroups()" id="home-button">Home</button>
+
+  <button (click)="location='MyProfile';getCurrentUser()" id="my-profile-button">My profile</button>
+
+  <button (click)="logout();location='Login'" id="logout-button">Log out</button>  
+
+  <p style="font-size:10px">(if you type nothing, you will get all the groups)</p>
+
+  <button *ngIf="location == 'GroupList' || location == 'PostList' || location == 'CommentList'"
+  (click)="refreshPage()">
+    Refresh page
+  </button>
+
+  <div *ngIf="location == 'GroupList'" id="group-list">
+
+    <div id="subscribed-groups">
+      Subscribed groups:
+      <hr width="300px" align="left">
+      <div *ngIf="!loading">
+        Loading...
+      </div>
+      <div *ngIf="loading">
+        <div *ngFor="let g of subscribed_groups">
+          <span (click)="location='PostList';cur_group=g;getGroupPosts(g);getUser(g.created_by)">
+              <div class="group-id-box">{{g.id}}</div>
+              <div class="vl"></div>
+              <div class="group-name-box"> {{g.name}} </div>
+              <div class="vl"></div>
+          </span>
+          <button (click)="subscribeToGroup(g)">
+              {{ g.subscribed ? "UNSUBSCRIBE": "SUBSCRIBE"}}
+              <div class="vl"></div>
+              {{ g.subscriber_count }}
+          </button>
+        </div>
+      </div>
+      <p *ngIf="subscribed_groups.length == 0">None</p>
+      <hr width="300px" align="left">
+    </div>
+
+    <div id="created-groups">
+        Create a group:
+        <div>
+          <input type="text" [(ngModel)]="new_group_name">
+          <button (click)="createGroup()">CREATE</button>
+        </div>
+        Created groups:
+        <hr width="450px" align="left">
+        <div *ngIf="!loading">
+          Loading...
+        </div>
+        <div *ngIf="loading">
+          <div *ngFor="let g of created_groups">
+            <div *ngIf="!edit || cur_group.id!=g.id">
+              <span (click)="location='PostList';cur_group=g;getGroupPosts(g);getUser(g.created_by)">
+                <div class="group-id-box">{{g.id}}</div>
+                <div class="vl"></div>
+                <div class="group-name-box"> {{g.name}} </div>
+                <div class="vl"></div>
+              </span>
+
+              <button (click)="subscribeToGroup(g)">
+                {{ g.subscribed ? "UNSUBSCRIBE": "SUBSCRIBE"}}
+                <div class="vl"></div>
+                {{ g.subscriber_count }}
+              </button>
+
+              <button (click)="cur_group=g; edit=true; edit_group_name=g.name" class="edit-group-button">EDIT</button>
+              <button (click)="deleteGroup(g)" class="delete-group-button">DELETE</button>
+            </div>
+            <div *ngIf="edit && cur_group.id==g.id">
+              <input type="text" placeholder="Group name" [(ngModel)]="edit_group_name">
+              <button (click)="cur_group=null; edit=false">CANCEL</button>
+              <button (click)="updateGroup(g); cur_group=null; edit=false">OK</button>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="created_groups.length == 0">None</p>
+        <hr width="450px" align="left">
+    </div>
+  </div>
+
+    
+
+  <div *ngIf="location == 'SearchGroup'">
+      Search results
+      <hr width="300px" align="left">
+      <div *ngIf="!loading">
+          Loading...
+        </div>
+        <div *ngIf="loading">
+          <div *ngFor="let g of groups">
+            <span (click)="location='GroupDetail';cur_group=g;getGroupPosts(g);getUser(g.created_by)">
+                <div class="group-id-box">{{g.id}}</div>
+                <div class="vl"></div>
+                <div class="group-name-box"> {{g.name}} </div>
+                <div class="vl"></div>
+            </span>
+            <button (click)="subscribeToGroup(g)">
+                {{ g.subscribed ? "UNSUBSCRIBE": "SUBSCRIBE"}}
+                <div class="vl"></div>
+                {{ g.subscriber_count }}
+            </button>
+          </div>
+        </div>
+        <hr width="300px" align="left">
+      </div>
+
+
+  
+  <div *ngIf="location == 'PostList'">
+      <h2>{{cur_group.name}}</h2>
+      <p>Id: {{cur_group.id}}</p>
+      <p>Created by: 
+        <span *ngIf="user">{{user.username}}</span></p>
+      <p>Created at: {{cur_group.created_at}}</p>
+        <div *ngFor="let p of posts">
+            <div class='post' (click)="location='CommentList';cur_post=p;getPostComments()">
+              <h3 class="post-title">{{p.title}}</h3>
+              <p>submitted by {{p.created_by}} at {{p.created_at}}</p>
+              <p>{{p.body}}</p>
+              <p></p>
+            </div>
+
+            <button (click)="putLikeOnPost(p);">
+              <span class="like-text">{{p.liked ? "Liked" : "Like"}}</span>
+              <div class="vl"></div>
+              {{p.like_count}}
+            </button>
+
+            <button *ngIf="p.created_by == cur_user.id">EDIT</button>      
+        </div>
+  </div>
+    
+
+
+  <div *ngIf="location == 'CommentList'">
+      <span>  title: {{post.title}} <br> {{post.body}}  </span>
+        <div *ngFor="let c of comments"  (click)="commentDetail(c)">
+            <span>  {{c.body}}  </span>
+            <span> author: {{c.createdBy}}  created: {{c.createdAt}}   </span>
+            <span> Likes: {{c.like_count}}     </span>
+            <button (click)="putLikeOnComment(c)">
+              like
+            </button>
+            <input type="text" [(ngModel)]="answer"/>
+            <button (click)="comment()">Comment</button>              
+        </div>
+  </div>
+
+  
+  
+  <div *ngIf="location == 'MyProfile'">
+      <h2>MyProfile</h2>
+      <p>ID: {{cur_user.id}}</p>
+      <p>Username: {{cur_user.username}}</p>
+      <p>First name: {{cur_user.first_name}}</p>
+      <p>Last name: {{cur_user.last_name}}</p>
+      <p>Reputation: {{cur_user.reputation}}</p>
+      <button (click)="set_new_password = true">Set new password</button>
+      
+      <div *ngIf="set_new_password">
+        <input type="password" placeholder="Old password" [(ngModel)]="set_password_old_pw">
+        <br>
+        <input type="password" placeholder="New password" [(ngModel)]="set_password_new_pw">
+        <br>
+        <button (click)="set_new_password=false;set_password_old_pw='';set_password_new_pw=''">Cancel</button>
+        <button (click)="setNewPassword();">OK</button>
+      </div>
+
+  </div>
+
+
 </div>

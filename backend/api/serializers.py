@@ -4,6 +4,7 @@ from api.models import CustomUser as User, Group, Post, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     # reputation = serializers.IntegerField(read_only=True)
+    password = serializers.CharField(max_length=200, write_only=True)
 
     def create(self, validated_data):
         print(validated_data)
@@ -21,7 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'email', 'reputation', 'date_joined', 'is_superuser')
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'reputation',
+                  'date_joined', 'is_superuser')
         # fields = '__all__'
 
 
@@ -30,32 +32,26 @@ class GroupSerializer(serializers.ModelSerializer):
     # name = serializers.CharField(required=True)
     # created_by = UserSerializer(read_only=True)
     # created_at = serializers.DateTimeField(read_only=True)
-    subscribers = UserSerializer(read_only=True, many=True)
-
     class Meta:
         model = Group
-        # fields = ('id', 'name', 'created_by', 'created_at', 'subscribers')
-        fields = '__all__'
+        fields = ('id', 'name', 'created_by', 'created_at')
 
 
 class PostSerializer(serializers.ModelSerializer):
     # title = serializers.CharField(required=True)
     # group = GroupSerializer()
-    likes = UserSerializer(read_only=True, many=True)
 
     class Meta:
         model = Post
-        # fields = ('id', 'title', 'created_by', 'created_at', 'group', 'like_count',)
-        fields = '__all__'
+        fields = ('id', 'title', 'body', 'created_by', 'created_at', 'group')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     # body = serializers.CharField(max_length=1000, required=True)
-    likes = UserSerializer(read_only=True, many=True)
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'body', 'created_by', 'created_at', 'post', 'directed_to')
 
 
 class BasePostSerializer(serializers.ModelSerializer):

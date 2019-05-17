@@ -29,7 +29,7 @@ class post_comments(APIView):
             post = Post.objects.get(id=pk)
         except Post.DoesNotExist as e:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        comments = post.comments.all()
+        comments = post.comments.filter(directed_to__isnull=True)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

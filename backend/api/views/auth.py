@@ -40,3 +40,28 @@ class CreateUserView(CreateAPIView):
         permissions.AllowAny # Or anon users can't register
     ]
     serializer_class = UserSerializer
+
+
+@api_view(['GET'])
+def current_user(request):
+    if request.method == 'GET':
+        serializer = UserSerializer(request.user)
+        print(request.user.id, request.user.username)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def set_password(request, pk):
+    if request.method == 'POST':
+        old_password = request.data['old_password']
+        new_password = request.data['new_password']
+        user = CustomUser.objects.get(id=pk)
+
+        username = user.username
+
+        serializer = AuthTokenSerializer(data={"username": username, "password": old_password})
+        serializer.is_valid(raise_exception=True)
+
+        user.set_password(new_password)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
